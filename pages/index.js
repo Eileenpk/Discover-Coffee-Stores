@@ -8,11 +8,10 @@ import coffeeStoresData from "../data/coffee-stores.json";
 
 export async function getStaticProps(context) {
   return {
-    props: { coffeeStores:coffeeStoresData },
+    props: { coffeeStores: coffeeStoresData },
   };
 }
 export default function Home({ coffeeStores }) {
-  console.log(coffeeStores);
   const handleOnButtonClick = () => {
     console.log("hi you clicked the banner btn");
   };
