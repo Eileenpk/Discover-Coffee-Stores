@@ -4,9 +4,15 @@ import { Inter } from "@next/font/google";
 import styles from "@/styles/Home.module.css";
 import Banner from "@/components/Banner";
 import Card from "@/components/Card";
-const inter = Inter({ subsets: ["latin"] });
+import coffeeStoresData from "../data/coffee-stores.json";
 
-export default function Home() {
+export async function getStaticProps(context) {
+  return {
+    props: { coffeeStores:coffeeStoresData },
+  };
+}
+export default function Home({ coffeeStores }) {
+  console.log(coffeeStores);
   const handleOnButtonClick = () => {
     console.log("hi you clicked the banner btn");
   };
@@ -32,15 +38,25 @@ export default function Home() {
             alt="woman drinking coffee"
           />
         </div>
-        <div className={styles.cardLayout}>
-          <Card
-            name="Darkhouse coffee"
-            imgUrl="/static/hero-image.png"
-            href="/coffee-store/darkhorse-coffee"
-            className={styles.card}
-          />
-          
-        </div>
+        {coffeeStores.length > 0 && (
+          <div>
+            <h2 className={styles.heading2}>Toronto stores</h2>
+            <div className={styles.cardLayout}>
+              {coffeeStores.map((store) => {
+                const { name, imgUrl, id } = store;
+                return (
+                  <Card
+                    key={id}
+                    name={name}
+                    imgUrl={imgUrl}
+                    href={`/coffee-store/${id}`}
+                    className={styles.card}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        )}
       </main>
     </>
   );
