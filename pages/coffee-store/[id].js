@@ -5,6 +5,8 @@ import coffeeStoresData from "../../data/coffee-stores.json";
 import styles from "@/styles/coffee-store.module.css";
 import Image from "next/image";
 export function getStaticProps({ params }) {
+
+
   return {
     props: {
       CoffeeStore: coffeeStoresData.find((CoffeeStore) => {
@@ -35,8 +37,8 @@ const CoffeeStore = ({ CoffeeStore }) => {
   const { address, name, neighborhood, imgUrl } = CoffeeStore;
 
   const handleUpvoteButton = () => {
-    console.log('clicked!')
-  }
+    console.log("clicked!");
+  };
   return (
     <div className={styles.layout}>
       <Head>
