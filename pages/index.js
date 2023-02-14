@@ -5,29 +5,18 @@ import styles from "@/styles/Home.module.css";
 import Banner from "@/components/Banner";
 import Card from "@/components/Card";
 import coffeeStoresData from "../data/coffee-stores.json";
-
+import { fetchCoffeeStores } from "@/lib/coffee-stores";
+// import handleTrackLocation from "@hooks/useTrackLocation"
 export async function getStaticProps(context) {
-  const options = {
-    method: "GET",
-    headers: {
-      accept: "application/json",
-      Authorization: process.env.FOURSQUARE_API_KEY,
-    },
-  };
-
-  const response = await fetch(
-    "https://api.foursquare.com/v3/places/search?query=coffee&ll=40.827066881391445%2C-75.07435870807116&limit=6",
-    options
-  )
-  const data = await response.json()
-   // .catch((err) => console.error(err));
+  const coffeeStores = await fetchCoffeeStores()
   return {
-    props: { coffeeStores: data.results },
+    props: { coffeeStores },
   };
 }
 export default function Home({ coffeeStores }) {
   const handleOnButtonClick = () => {
     console.log("hi you clicked the banner btn");
+    // handleTrackLocation()
   };
   return (
     <>
@@ -56,13 +45,13 @@ export default function Home({ coffeeStores }) {
             <h2 className={styles.heading2}>Toronto stores</h2>
             <div className={styles.cardLayout}>
               {coffeeStores.map((store) => {
-                const { name, imgUrl, fsq_id } = store;
+                const { name, imgUrl, id } = store;
                 return (
                   <Card
-                    key={fsq_id}
+                    key={id}
                     name={name}
                     imgUrl={imgUrl || "https://images.unsplash.com/photo-1498804103079-a6351b050096?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2468&q=80"}
-                    href={`/coffee-store/${fsq_id}`}
+                    href={`/coffee-store/${id}`}
                     className={styles.card}
                   />
                 );

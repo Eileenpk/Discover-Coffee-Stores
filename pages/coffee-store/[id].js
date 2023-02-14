@@ -4,20 +4,23 @@ import Head from "next/head";
 import coffeeStoresData from "../../data/coffee-stores.json";
 import styles from "@/styles/coffee-store.module.css";
 import Image from "next/image";
-export function getStaticProps({ params }) {
+import { fetchCoffeeStores } from "@/lib/coffee-stores";
 
+export async function getStaticProps({ params }) {
+    const coffeeStores = await fetchCoffeeStores()
 
   return {
     props: {
-      CoffeeStore: coffeeStoresData.find((CoffeeStore) => {
-        return CoffeeStore.id === parseInt(params.id);
+      CoffeeStore: coffeeStores.find((CoffeeStore) => {
+        return CoffeeStore.id.toString() === params.id;
       }),
     },
   };
 }
 
-export function getStaticPaths() {
-  const paths = coffeeStoresData.map((coffeeStore) => {
+export async function getStaticPaths() {
+    const coffeeStores = await fetchCoffeeStores()
+  const paths = coffeeStores.map((coffeeStore) => {
     return {
       params: {
         id: coffeeStore.id.toString(),
@@ -34,7 +37,7 @@ const CoffeeStore = ({ CoffeeStore }) => {
   if (router.isFallback) {
     return <div>Loading...</div>;
   }
-  const { address, name, neighborhood, imgUrl } = CoffeeStore;
+  const { address, locality, name, imgUrl } = CoffeeStore;
 
   const handleUpvoteButton = () => {
     console.log("clicked!");
@@ -77,7 +80,7 @@ const CoffeeStore = ({ CoffeeStore }) => {
               <p className={styles.text}>{address}</p>
             </div>
           )}
-          {neighborhood && (
+          {locality && (
             <div className={styles.iconWrapper}>
               <Image
                 src="/static/icons/nearMe.svg"
@@ -85,7 +88,7 @@ const CoffeeStore = ({ CoffeeStore }) => {
                 height="24"
                 alt="near me icon"
               />
-              <p className={styles.text}>{neighborhood}</p>
+              <p className={styles.text}>{locality}</p>
             </div>
           )}
           <div className={styles.iconWrapper}>
@@ -95,7 +98,7 @@ const CoffeeStore = ({ CoffeeStore }) => {
               height="24"
               alt="star icon"
             />
-            {/* <p className={styles.text}>{votingCount}</p> */}
+            <p className={styles.text}>1</p>
           </div>
 
           <button className={styles.upvoteButton} onClick={handleUpvoteButton}>
