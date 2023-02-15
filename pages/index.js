@@ -7,7 +7,8 @@ import Card from "@/components/Card";
 import coffeeStoresData from "../data/coffee-stores.json";
 import { fetchCoffeeStores } from "@/lib/coffee-stores";
 import useTrackLocation from "@/hooks/use-track-location";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import {ACTION_TYPES, StoreContext} from '@/pages/_app'
 //import handleTrackLocation from "@hooks/useTrackLocation"
 export async function getStaticProps(context) {
   const coffeeStores = await fetchCoffeeStores();
@@ -16,11 +17,14 @@ export async function getStaticProps(context) {
   };
 }
 export default function Home(props) {
-  const { handleTrackLocation, latLong, locationErrorMsg, isFindingLocation } =
+  const { handleTrackLocation, locationErrorMsg, isFindingLocation } =
     useTrackLocation();
 
-    const [coffeeStores, setCoffeeStores] = useState('')
-    const [coffeeStoresError, setCoffeeStoresError] = useState(null)
+  //const [coffeeStores, setCoffeeStores] = useState("");
+  const [coffeeStoresError, setCoffeeStoresError] = useState(null);
+
+  const { dispatch, state } = useContext(StoreContext);
+  const {coffeeStores, latLong } = state
   console.log({ latLong, locationErrorMsg });
 
   useEffect(() => {
@@ -28,13 +32,18 @@ export default function Home(props) {
       if (latLong) {
         try {
           const fetchedCoffeeStores = await fetchCoffeeStores(latLong, 30);
-          
-          console.log({ fetchedCoffeeStores });
-          setCoffeeStores(fetchedCoffeeStores)
 
+          console.log({ fetchedCoffeeStores });
+          //setCoffeeStores(fetchedCoffeeStores)
+          dispatch({
+            type: ACTION_TYPES.SET_COFFEE_STORES,
+            payload: {
+              coffeeStores: fetchedCoffeeStores,
+            },
+          });
         } catch (error) {
           console.log(error);
-          setCoffeeStoresError(error.message)
+          setCoffeeStoresError(error.message);
         }
       }
     }
@@ -92,8 +101,6 @@ export default function Home(props) {
             </div>
           </div>
         )}
-
-
 
         {props.coffeeStores.length > 0 && (
           <div>
